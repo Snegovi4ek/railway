@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head"/>
+<body>
+<div th:replace="fragments/navbar"></div>
+<main class="container">
+  <hgroup>
+    <h1>Все рейсы</h1>
+    <p>Просмотрите все рейсы в системе</p>
+  </hgroup>
+
+  <form th:action="@{/trips/all}" method="get" style="margin-bottom: 2rem;">
+    <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 1rem;">
+      <div>
+        <label for="search">
+          Поиск по городу
+          <input type="text" name="search" id="search" placeholder="Введите город" th:value="${search}">
+        </label>
+        <select name="type">
+          <option value="departure" th:selected="${type == 'departure'}">Город отправления</option>
+          <option value="arrival" th:selected="${type == 'arrival'}">Город прибытия</option>
+        </select>
+      </div>
+      <div>
+        <label for="station">
+          Фильтр по вокзалу
+          <select name="station" id="station">
+            <option value="">Все вокзалы</option>
+            <option value="Курский вокзал" th:selected="${station == 'Курский вокзал'}">Курский вокзал</option>
+            <option value="Казанский вокзал" th:selected="${station == 'Казанский вокзал'}">Казанский вокзал</option>
+            <option value="Московский вокзал" th:selected="${station == 'Московский вокзал'}">Московский вокзал</option>
+            <option value="Ладожский вокзал" th:selected="${station == 'Ладожский вокзал'}">Ладожский вокзал</option>
+            <option value="Киевский вокзал" th:selected="${station == 'Киевский вокзал'}">Киевский вокзал</option>
+            <option value="Ярославский вокзал" th:selected="${station == 'Ярославский вокзал'}">Ярославский вокзал</option>
+          </select>
+        </label>
+      </div>
+    </div>
+    <button type="submit" style="margin-top: 1rem;">Применить фильтры</button>
+    <a th:href="@{/trips/all}" role="button" class="secondary" style="margin-left: 0.5rem;">Сбросить</a>
+  </form>
+
+  <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));">
+    <div th:each="t : ${trips}">
+      <article class="card">
+        <header>
+          <h3 th:text="${t.departureCity} + ' → ' + ${t.arrivalCity}"></h3>
+        </header>
+        <p><strong>Вокзал:</strong> <span th:text="${t.stationName}"></span></p>
+        <p><strong>Время отправления:</strong>
+          <span th:text="${#temporals.format(t.departureTime, 'dd.MM.yyyy HH:mm')}"></span>
+        </p>
+        <p><strong>Время прибытия:</strong>
+          <span th:text="${#temporals.format(t.arrivalTime, 'dd.MM.yyyy HH:mm')}"></span>
+        </p>
+        <footer>
+          <a th:href="@{/trips/details/{id}(id=${t.id})}"
+             role="button"
+             class="outline">
+            Подробнее
+          </a>
+        </footer>
+      </article>
+    </div>
+  </div>
+
+  <p th:if="${#lists.isEmpty(trips)}" class="text-center">
+    <em>Рейсы не найдены. Добавьте новые рейсы, чтобы начать!</em>
+  </p>
+</main>
+<footer th:replace="fragments/footer"></footer>
+</body>
+</html>

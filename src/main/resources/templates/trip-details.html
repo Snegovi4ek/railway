@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments/head"/>
+<body>
+<div th:replace="fragments/navbar"></div>
+<main class="container">
+  <hgroup>
+    <h1>Информация о рейсе</h1>
+    <p>Подробные сведения о выбранном рейсе</p>
+  </hgroup>
+  <article class="card">
+    <div class="grid">
+      <div>
+        <img src="/pic/train.png"
+             alt="Поезд"
+             style="width: 100%; max-width: 400px; border-radius: var(--pico-border-radius);">
+      </div>
+
+      <div sec:authorize="isAuthenticated()">
+        <a th:href="@{/bookings/add/{id}(id=${tripDetails.id})}"
+           role="button"
+           class="primary">
+           Забронировать зал ожидания
+        </a>
+        <p style="margin-top: 0.5rem; color: #6c757d; font-size: 0.9rem;">
+          Забронируйте комфортное место в зале ожидания перед поездкой
+        </p>
+      </div>
+
+      <div>
+        <h2 th:text="${tripDetails.departureCity} + ' → ' + ${tripDetails.arrivalCity}"></h2>
+        <p><strong>Вокзал:</strong> <span th:text="${tripDetails.stationName}"></span></p>
+        <p><strong>Время отправления:</strong> <span th:text="${tripDetails.departureTime}"></span></p>
+        <p><strong>Время прибытия:</strong> <span th:text="${tripDetails.arrivalTime}"></span></p>
+        <div sec:authorize="hasRole('ADMIN')">
+          <a th:href="@{/trips/edit/{id}(id=${tripDetails.id})}"
+             role="button">
+            Редактировать рейс
+          </a>
+          <a th:href="@{/trips/delete/{id}(id=${tripDetails.id})}"
+             role="button"
+             class="secondary"
+             onclick="return confirm('Вы уверены, что хотите удалить этот рейс?');">
+            Удалить рейс
+          </a>
+        </div>
+      </div>
+    </div>
+  </article>
+</main>
+<footer th:replace="fragments/footer"></footer>
+</body>
+</html>

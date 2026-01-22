@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments/head"/>
+<body>
+<div th:replace="fragments/navbar"></div>
+<main class="container">
+  <hgroup>
+    <h1>Мои бронирования</h1>
+    <p>Просмотрите все ваши бронирования залов ожидания</p>
+  </hgroup>
+
+  <div th:if="${successMessage}" style="background: #d4edda; color: #155724; padding: 10px; border-radius: 5px; margin-bottom: 20px;">
+    <span th:text="${successMessage}"></span>
+  </div>
+
+
+  <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 1.5rem;">
+    <div th:each="booking : ${bookings}">
+      <article class="card">
+        <header>
+          <h3 th:text="${booking.departureCity} + ' → ' + ${booking.arrivalCity}"></h3>
+          <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+            <div th:if="${booking.hallType == 'VIP'}"
+                 style="background: #ffd700; color: #000; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem;">
+              VIP
+            </div>
+            <div th:if="${booking.status == 'CONFIRMED'}"
+                 style="background: #28a745; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem;">
+              Подтверждено
+            </div>
+            <div th:if="${booking.status == 'CANCELLED'}"
+                 style="background: #dc3545; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem;">
+              Отменено
+            </div>
+          </div>
+        </header>
+
+        <p><strong>Зал:</strong> <span th:text="${booking.hallName}"></span></p>
+        <p><strong>Дата отправления:</strong>
+          <span th:text="${#temporals.format(booking.departureTime, 'dd.MM.yyyy HH:mm')}"></span>
+        </p>
+        <p><strong>Дата бронирования:</strong>
+          <span th:text="${#temporals.format(booking.bookingTime, 'dd.MM.yyyy HH:mm')}"></span>
+        </p>
+        <p><strong>Места:</strong> <span th:text="${booking.seats}"></span></p>
+        <p><strong>Стоимость:</strong> <span th:text="${#numbers.formatDecimal(booking.totalPrice, 1, 2) + ' ₽'}"></span></p>
+
+        <footer>
+          <div th:if="${booking.status == 'CONFIRMED'}">
+            <a th:href="@{/bookings/cancel/{id}(id=${booking.id})}"
+               role="button"
+               class="secondary"
+               onclick="return confirm('Вы уверены, что хотите отменить это бронирование?')">
+              Отменить бронирование
+            </a>
+          </div>
+          <div th:unless="${booking.status == 'CONFIRMED'}">
+            <span style="color: #6c757d; font-style: italic;">Действия недоступны</span>
+          </div>
+        </footer>
+      </article>
+    </div>
+  </div>
+
+  <p th:if="${#lists.isEmpty(bookings)}" class="text-center">
+    <em>У вас нет активных бронирований. Забронируйте зал ожидания для вашего рейса!</em>
+    <br>
+    <a th:href="@{/trips}" role="button" class="primary" style="margin-top: 1rem;">Найти рейс</a>
+  </p>
+
+  <article style="margin-top: 3rem; background: #f8f9fa; padding: 1.5rem; border-radius: 8px;">
+    <h3>Как пользоваться залом ожидания</h3>
+    <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 1rem;">
+      <div>
+        <h4>Процесс использования:</h4>
+        <ul>
+          <li>Подойдите к залу за 30 минут до отправления</li>
+          <li>Предъявите билет на рейс</li>
+          <li>Оплатите бронирование на месте</li>
+          <li>Наслаждайтесь комфортом перед поездкой</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Условия отмены:</h4>
+        <ul>
+          <li>Отмена возможна не позднее, чем за 2 часа до отправления</li>
+          <li>При отмене удерживается 10% от стоимости</li>
+          <li>После отправления рейса отмена невозможна</li>
+        </ul>
+      </div>
+    </div>
+  </article>
+</main>
+<footer th:replace="fragments/footer"></footer>
+</body>
+</html>

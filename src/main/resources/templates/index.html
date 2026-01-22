@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head"/>
+<body>
+<div th:replace="fragments/navbar"></div>
+<main class="container">
+  <article class="text-center">
+    <hgroup>
+      <h1>Добро пожаловать в систему управления поездками!</h1>
+      <p>Современное приложение на Spring Boot для управления рейсами и бронированиями</p>
+    </hgroup>
+    <p>
+      <small>Последнее обновление данных: <strong th:text="${#temporals.format(#temporals.createNow(), 'dd.MM.yyyy HH:mm:ss')}"></strong></small>
+    </p>
+  </article>
+
+  <article style="margin-top: 2rem;">
+    <h3>Бронирование залов ожидания</h3>
+    <p>Забронируйте комфортное место в зале ожидания для вашего рейса:</p>
+    <ul>
+      <li>Обычные залы - от 500 ₽</li>
+      <li>VIP залы - от 1500 ₽</li>
+      <li>Wi-Fi, напитки, питание</li>
+      <li>Оплата при заселении</li>
+    </ul>
+    <a th:href="@{/trips/all}" role="button" class="primary">Найти рейс для бронирования</a>
+    <a th:href="@{/halls/all}" role="button" class="outline" style="margin-left: 0.5rem;">Посмотреть все залы</a>
+    <div sec:authorize="isAuthenticated()" style="margin-top: 0.5rem;">
+      <a th:href="@{/bookings/my}" role="button" class="secondary">Мои бронирования</a>
+    </div>
+  </article>
+</main>
+<footer th:replace="fragments/footer"></footer>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments/head"/>
+<body>
+<div th:replace="fragments/navbar"></div>
+<main class="container">
+    <article style="max-width: 600px; margin: 0 auto;">
+        <hgroup>
+            <h1>Добавление зала ожидания</h1>
+            <p>Заполните информацию о зале ожидания</p>
+        </hgroup>
+
+        <div th:if="${successMessage}" style="background: #d4edda; color: #155724; padding: 10px; border-radius: 5px; margin-bottom: 20px;">
+            <span th:text="${successMessage}"></span>
+        </div>
+
+        <form th:action="@{/halls/add}"
+              th:method="post"
+              th:object="${hallModel}">
+
+            <label for="name">
+                Название зала
+                <input th:field="*{name}"
+                       th:errorclass="is-invalid"
+                       type="text"
+                       id="name"
+                       placeholder="Введите название зала"
+                       required/>
+                <small th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="text-danger"></small>
+            </label>
+
+            <label for="type">
+                Тип зала
+                <select th:field="*{type}"
+                        th:errorclass="is-invalid"
+                        id="type"
+                        required>
+                    <option value="">Выберите тип зала</option>
+                    <option value="STANDARD">Обычный</option>
+                    <option value="VIP">VIP</option>
+                </select>
+                <small th:if="${#fields.hasErrors('type')}" th:errors="*{type}" class="text-danger"></small>
+            </label>
+
+            <label for="price">
+                Цена за место (₽)
+                <input th:field="*{price}"
+                       th:errorclass="is-invalid"
+                       type="number"
+                       id="price"
+                       placeholder="0.00"
+                       step="0.01"
+                       min="0"
+                       required/>
+                <small th:if="${#fields.hasErrors('price')}" th:errors="*{price}" class="text-danger"></small>
+            </label>
+
+            <label for="services">
+                Услуги
+                <textarea th:field="*{services}"
+                          id="services"
+                          placeholder="Wi-Fi, напитки, питание..."
+                          rows="3"></textarea>
+            </label>
+
+            <label for="totalSeats">
+                Общее количество мест
+                <input th:field="*{totalSeats}"
+                       th:errorclass="is-invalid"
+                       type="number"
+                       id="totalSeats"
+                       placeholder="10"
+                       min="1"
+                       required/>
+                <small th:if="${#fields.hasErrors('totalSeats')}" th:errors="*{totalSeats}" class="text-danger"></small>
+            </label>
+
+            <div style="display: flex; gap: 1rem;">
+                <button type="submit" class="primary">Добавить зал</button>
+                <a th:href="@{/halls/all}"
+                   role="button"
+                   class="secondary">
+                    Назад к списку
+                </a>
+            </div>
+        </form>
+    </article>
+</main>
+<footer th:replace="fragments/footer"></footer>
+</body>
+</html>

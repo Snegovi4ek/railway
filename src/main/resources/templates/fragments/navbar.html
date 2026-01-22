@@ -1,0 +1,43 @@
+<nav xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns:th="http://www.thymeleaf.org">
+  <div class="container">
+    <ul>
+      <li><strong><a href="/" style="text-decoration: none;">Управление поездками</a></strong></li>
+      <li sec:authorize="hasRole('ADMIN')"><a href="/trips/add">Добавить рейс</a></li>
+      <li><a href="/trips/all">Все рейсы</a></li>
+
+      <li><a href="/halls/all">Залы ожидания</a></li>
+
+      <li sec:authorize="hasRole('USER')">
+        <a href="/bookings/my">Мои бронирования</a>
+      </li>
+
+      <li style="margin-left: auto;" sec:authorize="isAuthenticated()">
+        <span style="padding: 0.5rem; color: var(--pico-muted-color);">
+          <span sec:authentication="name"></span>
+        </span>
+      </li>
+
+      <li sec:authorize="isAuthenticated()">
+        <form th:method="post" th:action="@{/users/logout}" style="margin: 0;">
+          <button type="submit"
+                  style="background: #dc3545;
+                         color: white;
+                         padding: 0.3rem 0.8rem;
+                         border: 1px solid #dc3545;
+                         border-radius: var(--pico-border-radius);
+                         cursor: pointer;">
+            Выйти
+          </button>
+        </form>
+      </li>
+
+      <li style="margin-left: auto;" sec:authorize="!isAuthenticated()">
+        <a href="/users/register" role="button">Регистрация</a>
+      </li>
+
+      <li sec:authorize="!isAuthenticated()">
+        <a href="/users/login" role="button" class="secondary">Вход</a>
+      </li>
+    </ul>
+  </div>
+</nav>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments/head"/>
+<body>
+<div th:replace="fragments/navbar"></div>
+<main class="container">
+  <hgroup>
+    <h1>Залы ожидания</h1>
+    <p>Просмотрите все доступные залы ожидания</p>
+  </hgroup>
+
+  <div th:if="${successMessage}" style="background: #d4edda; color: #155724; padding: 10px; border-radius: 5px; margin-bottom: 20px;">
+    <span th:text="${successMessage}"></span>
+  </div>
+
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+    <div style="display: flex; gap: 1rem;">
+      <a th:href="@{/halls/active}" role="button" class="outline">Только активные</a>
+      <a th:href="@{/halls/all}" role="button" class="outline">Все залы</a>
+    </div>
+
+    <a th:href="@{/halls/add}" role="button" class="primary" sec:authorize="hasRole('ADMIN')">+ Добавить зал</a>
+  </div>
+
+  <form th:action="@{/halls/all}" method="get" style="margin-bottom: 2rem;">
+    <div class="grid" style="grid-template-columns: 1fr; gap: 1rem;">
+      <div>
+        <label for="type">
+          Фильтр по типу
+          <select name="type" id="type">
+            <option value="">Все типы</option>
+            <option value="STANDARD" th:selected="${type == 'STANDARD'}">Обычный</option>
+            <option value="VIP" th:selected="${type == 'VIP'}">VIP</option>
+          </select>
+        </label>
+      </div>
+    </div>
+    <button type="submit" style="margin-top: 1rem;">Применить фильтр</button>
+    <a th:href="@{/halls/all}" role="button" class="secondary" style="margin-left: 0.5rem;">Сбросить</a>
+  </form>
+
+  <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;">
+    <div th:each="hall : ${halls}">
+      <article class="card">
+        <header>
+          <h3 th:text="${hall.name}"></h3>
+          <div th:if="${hall.type == 'VIP'}" style="background: #ffd700; color: #000; padding: 2px 8px; border-radius: 12px; display: inline-block; font-size: 0.8rem;">
+            VIP
+          </div>
+          <div th:if="${hall.type == 'STANDARD'}" style="background: #007bff; color: white; padding: 2px 8px; border-radius: 12px; display: inline-block; font-size: 0.8rem;">
+            Обычный
+          </div>
+        </header>
+        <p><strong>Цена за место:</strong> <span th:text="${#numbers.formatDecimal(hall.price, 1, 2)} + ' ₽'"></span></p>
+        <p><strong>Места:</strong> <span th:text="${hall.availableSeats} + ' из ' + ${hall.totalSeats}"></span></p>
+        <p><strong>Статус:</strong>
+          <span th:if="${hall.active}" style="color: green;">● Активен</span>
+          <span th:unless="${hall.active}" style="color: red;">● Неактивен</span>
+        </p>
+        <p th:if="${hall.services}"><strong>Услуги:</strong> <span th:text="${hall.services}"></span></p>
+
+        <footer>
+          <a th:href="@{/halls/edit/{id}(id=${hall.id})}"
+             role="button"
+             class="outline"
+             style="margin-right: 0.5rem;"
+             sec:authorize="hasRole('ADMIN')">
+            Редактировать
+          </a>
+          <a th:href="@{/halls/delete/{id}(id=${hall.id})}"
+             role="button"
+             class="secondary"
+             onclick="return confirm('Вы уверены, что хотите удалить этот зал?')"
+             sec:authorize="hasRole('ADMIN')">
+            Удалить
+          </a>
+
+          <div sec:authorize="!hasRole('ADMIN')" style="margin-top: 0.5rem;">
+            <small>
+              <a th:href="@{/trips/all}" class="secondary">
+                Выбрать рейс для бронирования
+              </a>
+            </small>
+          </div>
+        </footer>
+      </article>
+    </div>
+  </div>
+
+  <p th:if="${#lists.isEmpty(halls)}" class="text-center">
+    <em>Залы ожидания не найдены. Добавьте новые залы, чтобы начать!</em>
+  </p>
+</main>
+<footer th:replace="fragments/footer"></footer>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments/head"/>
+<body>
+<div th:replace="fragments/navbar"></div>
+<main class="container">
+  <article style="max-width: 600px; margin: 0 auto;">
+    <hgroup>
+      <h1>Редактирование рейса</h1>
+      <p>Измените информацию о рейсе</p>
+    </hgroup>
+
+    <div th:if="${successMessage}" style="background: #d4edda; color: #155724; padding: 10px; border-radius: 5px; margin-bottom: 20px;">
+      <span th:text="${successMessage}"></span>
+    </div>
+
+    <form th:action="@{/trips/edit}"
+          th:method="post"
+          th:object="${tripModel}">
+
+      <input type="hidden" th:field="*{id}" />
+
+      <label for="departureCity">
+        Город отправления
+        <input th:field="*{departureCity}"
+               th:errorclass="is-invalid"
+               type="text"
+               id="departureCity"
+               placeholder="Введите город отправления"
+               required/>
+        <small th:if="${#fields.hasErrors('departureCity')}" th:errors="*{departureCity}" class="text-danger"></small>
+      </label>
+
+      <label for="arrivalCity">
+        Город прибытия
+        <input th:field="*{arrivalCity}"
+               th:errorclass="is-invalid"
+               type="text"
+               id="arrivalCity"
+               placeholder="Введите город прибытия"
+               required/>
+        <small th:if="${#fields.hasErrors('arrivalCity')}" th:errors="*{arrivalCity}" class="text-danger"></small>
+      </label>
+
+      <label for="departureTime">
+        Время отправления
+        <input th:field="*{departureTime}"
+               th:errorclass="is-invalid"
+               type="datetime-local"
+               id="departureTime"
+               required/>
+        <small th:if="${#fields.hasErrors('departureTime')}" th:errors="*{departureTime}" class="text-danger"></small>
+      </label>
+
+      <label for="arrivalTime">
+        Время прибытия
+        <input th:field="*{arrivalTime}"
+               th:errorclass="is-invalid"
+               type="datetime-local"
+               id="arrivalTime"
+               required/>
+        <small th:if="${#fields.hasErrors('arrivalTime')}" th:errors="*{arrivalTime}" class="text-danger"></small>
+      </label>
+
+      <label for="stationName">
+        Вокзал отправления
+        <select th:field="*{stationName}"
+                th:errorclass="is-invalid"
+                id="stationName"
+                required>
+          <option value="">Выберите вокзал</option>
+          <option value="Курский вокзал">Курский вокзал (Москва)</option>
+          <option value="Казанский вокзал">Казанский вокзал (Москва)</option>
+          <option value="Московский вокзал">Московский вокзал (Санкт-Петербург)</option>
+          <option value="Ладожский вокзал">Ладожский вокзал (Санкт-Петербург)</option>
+          <option value="Киевский вокзал">Киевский вокзал (Москва)</option>
+          <option value="Ярославский вокзал">Ярославский вокзал (Москва)</option>
+        </select>
+        <small th:if="${#fields.hasErrors('stationName')}" th:errors="*{stationName}" class="text-danger"></small>
+      </label>
+
+      <div style="display: flex; gap: 1rem;">
+        <button type="submit" class="primary">Сохранить изменения</button>
+        <a th:href="@{/trips/details/{id}(id=${tripModel.id})}"
+           role="button"
+           class="secondary">
+          Отмена
+        </a>
+      </div>
+    </form>
+  </article>
+</main>
+<footer th:replace="fragments/footer"></footer>
+</body>
+</html>

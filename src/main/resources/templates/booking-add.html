@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments/head"/>
+<body>
+<div th:replace="fragments/navbar"></div>
+<main class="container">
+  <article style="max-width: 800px; margin: 0 auto;">
+    <div style="margin-bottom: 1.5rem;">
+      <a th:href="@{/trips/details/{id}(id=${tripDetails.id})}"
+         role="button"
+         class="outline">
+        Назад к рейсу
+      </a>
+    </div>
+
+    <hgroup>
+      <h1>Бронирование зала ожидания</h1>
+      <p>Забронируйте место в зале ожидания для вашего рейса</p>
+    </hgroup>
+
+    <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
+      <h3>Информация о рейсе</h3>
+      <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div>
+          <p><strong>Откуда:</strong> <span th:text="${tripDetails.departureCity}"></span></p>
+          <p><strong>Куда:</strong> <span th:text="${tripDetails.arrivalCity}"></span></p>
+        </div>
+        <div>
+          <p><strong>Дата отправления:</strong>
+            <span th:text="${#temporals.format(tripDetails.departureTime, 'dd.MM.yyyy HH:mm')}"></span>
+          </p>
+          <p><strong>Вокзал:</strong> <span th:text="${tripDetails.stationName}"></span></p>
+        </div>
+      </div>
+    </div>
+
+    <form th:action="@{/bookings/add}"
+          th:method="post"
+          th:object="${bookingModel}">
+
+      <input type="hidden" name="tripId" th:value="${tripDetails.id}" />
+
+      <div style="margin-bottom: 2rem;">
+        <h3>Выберите тип зала</h3>
+        <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1rem; margin-top: 1rem;">
+          <div style="border: 2px solid #dee2e6; border-radius: 8px; padding: 1rem; cursor: pointer;"
+               onclick="selectHall('Обычный', 500, '1')"
+               id="hall-standard">
+            <h4>Обычный зал</h4>
+            <p style="color: #6c757d; font-size: 0.9rem;">Wi-Fi, базовые удобства</p>
+            <p style="font-weight: bold; margin-top: 0.5rem;">от 500 ₽/место</p>
+          </div>
+
+          <div style="border: 2px solid #dee2e6; border-radius: 8px; padding: 1rem; cursor: pointer;"
+               onclick="selectHall('VIP', 1500, '2')"
+               id="hall-vip">
+            <h4>VIP зал</h4>
+            <p style="color: #6c757d; font-size: 0.9rem;">Напитки, питание, повышенный комфорт</p>
+            <p style="font-weight: bold; margin-top: 0.5rem;">от 1500 ₽/место</p>
+          </div>
+        </div>
+
+        <input type="hidden" th:field="*{hallId}" id="selectedHallId" />
+        <small th:if="${#fields.hasErrors('hallId')}" th:errors="*{hallId}" class="text-danger"></small>
+      </div>
+
+      <label for="seats">
+        Количество мест
+        <input th:field="*{seats}"
+               th:errorclass="is-invalid"
+               type="number"
+               id="seats"
+               placeholder="1"
+               min="1"
+               max="10"
+               required
+               oninput="updatePrice()"
+               style="max-width: 150px;"/>
+        <small style="display: block; margin-top: 0.25rem; color: #6c757d;">Максимально 10 мест на одно бронирование</small>
+        <small th:if="${#fields.hasErrors('seats')}" th:errors="*{seats}" class="text-danger"></small>
+      </label>
+
+      <div style="background: #e9ecef; padding: 1.5rem; border-radius: 8px; margin: 2rem 0;">
+        <h3>Стоимость</h3>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+          <span>Цена за место:</span>
+          <span id="pricePerSeat">-</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+          <span>Количество мест:</span>
+          <span id="seatCount">1</span>
+        </div>
+        <hr style="margin: 1rem 0;">
+        <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 1.1rem;">
+          <span>Итого:</span>
+          <span id="totalPrice">-</span>
+        </div>
+      </div>
+
+      <div style="background: #cce5ff; color: #004085; padding: 1rem; border-radius: 8px; margin-bottom: 2rem;">
+        <p style="margin: 0;"><strong>Важно:</strong> Бронирование будет автоматически подтверждено. Оплата производится непосредственно в зале ожидания перед посадкой.</p>
+      </div>
+
+      <div style="display: flex; gap: 1rem;">
+        <button type="submit" class="primary">Забронировать</button>
+        <a th:href="@{/trips/details/{id}(id=${tripDetails.id})}"
+           role="button"
+           class="secondary">
+          Назад к рейсу
+        </a>
+      </div>
+    </form>
+  </article>
+</main>
+<footer th:replace="fragments/footer"></footer>
+
+<script>
+  let selectedHall = null;
+  let hallPrice = 0;
+
+  function selectHall(type, price, hallId) {
+      selectedHall = type;
+      hallPrice = price;
+
+      document.getElementById('hall-standard').style.borderColor = '#dee2e6';
+      document.getElementById('hall-vip').style.borderColor = '#dee2e6';
+
+      if (type === 'STANDARD') {
+          document.getElementById('hall-standard').style.borderColor = '#007bff';
+      } else {
+          document.getElementById('hall-vip').style.borderColor = '#007bff';
+      }
+
+      document.getElementById('selectedHallId').value = hallId;
+
+      updatePrice();
+  }
+
+  function updatePrice() {
+      const seatsInput = document.getElementById('seats');
+      const seats = parseInt(seatsInput.value) || 1;
+
+      document.getElementById('seatCount').textContent = seats;
+
+      if (selectedHall) {
+          document.getElementById('pricePerSeat').textContent = hallPrice.toFixed(2) + ' ₽';
+          document.getElementById('totalPrice').textContent = (hallPrice * seats).toFixed(2) + ' ₽';
+      } else {
+          document.getElementById('pricePerSeat').textContent = '-';
+          document.getElementById('totalPrice').textContent = '-';
+      }
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+      selectHall('STANDARD', 500, '1');
+  });
+</script>
+</body>
+</html>
