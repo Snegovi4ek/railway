@@ -39,6 +39,7 @@ public class AppSecurityConfiguration {
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         .requestMatchers("/favicon.ico", "/error").permitAll()
                         .requestMatchers("/", "/users/login", "/users/register", "/users/login-error").permitAll()
+                        .requestMatchers("/api/**").permitAll()
                         .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/users/profile").authenticated()
                         .requestMatchers("/admin/**").hasRole(UserRoles.ADMIN.name())

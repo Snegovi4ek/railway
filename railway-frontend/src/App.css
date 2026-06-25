@@ -1,0 +1,195 @@
+.app-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+}
+
+.header {
+  background: var(--color-primary);
+  color: var(--color-button-text);
+  padding: 1.25rem 1.5rem;
+}
+
+.header__title {
+  margin: 0;
+  font-size: clamp(1.35rem, 3vw, 2rem);
+}
+
+.header__subtitle {
+  margin: 0.35rem 0 0;
+  font-size: 0.95rem;
+  opacity: 0.9;
+}
+
+.page-content {
+  padding: 1rem;
+}
+
+.page-grid {
+  max-width: 960px;
+  margin: 0 auto;
+  display: grid;
+  gap: 1.25rem;
+}
+
+.section-card {
+  background: #ffffff;
+  color: var(--color-text);
+  padding: 1.25rem;
+  border: dashed 0.1rem var(--color-primary);
+  border-radius: 15px;
+  box-shadow: 0.5em 1em 0.5em 0em rgba(64, 73, 59, 0.281);
+}
+
+.section-card__title {
+  margin: 0 0 0.75rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 3px solid var(--color-primary-hover);
+}
+
+.section-text {
+  margin: 0 0 1rem;
+}
+
+.trip-form {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.trip-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-weight: 500;
+}
+
+.trip-form__input {
+  border: 1px solid var(--color-primary);
+  border-radius: 8px;
+  padding: 0.55rem 0.75rem;
+}
+
+.btn {
+  border: none;
+  border-radius: 8px;
+  padding: 0.55rem 1rem;
+  color: var(--color-button-text);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn--create {
+  background: var(--color-primary);
+  justify-self: start;
+}
+
+.btn--create:hover {
+  background: var(--color-primary-hover);
+}
+
+.btn--delete {
+  background: var(--color-delete);
+}
+
+.btn--archive {
+  background: var(--color-archive);
+}
+
+.trip-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.85rem;
+}
+
+.trip-item {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.85rem;
+  border: 1px solid var(--color-primary);
+  border-radius: 10px;
+}
+
+.trip-item__route {
+  margin: 0 0 0.5rem;
+}
+
+.trip-item__info p {
+  margin: 0.2rem 0;
+}
+
+.trip-item__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.archive-list {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.archive-list li {
+  margin-bottom: 0.35rem;
+}
+
+.empty-hint {
+  margin: 0;
+  color: #40493b;
+}
+
+.loader {
+  color: var(--color-primary);
+}
+
+.error-message {
+  color: var(--color-delete);
+}
+
+.footer {
+  background: var(--color-primary);
+  color: var(--color-button-text);
+  padding: 0.85rem 1.5rem;
+  text-align: center;
+}
+
+.footer p {
+  margin: 0;
+}
+
+/* Планшет */
+@media (min-width: 600px) {
+  .trip-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .btn--create {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Широкий экран */
+@media (min-width: 900px) {
+  .page-content {
+    padding: 1.5rem 2rem;
+  }
+
+  .trip-form {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* Смартфон — кнопки на всю ширину */
+@media (max-width: 599px) {
+  .trip-item__actions {
+    width: 100%;
+  }
+
+  .trip-item__actions .btn {
+    flex: 1;
+  }
+}

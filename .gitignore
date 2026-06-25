@@ -31,3 +31,8 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# React frontend
+railway-frontend/node_modules/
+railway-frontend/dist/
+railway-frontend/.idea/
